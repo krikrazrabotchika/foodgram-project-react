@@ -18,6 +18,9 @@ class CustomUserViewSet(UserViewSet):
     serializer_class = CustomUserSerializer
     pagination_class = CustomPagination
 
+    def get_queryset(self):
+        return User.objects.annotate(recipe_count='recipe')
+
     @action(
         detail=True,
         methods=['post', 'delete'],
