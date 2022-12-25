@@ -105,7 +105,6 @@ tzdata==2022.1
 uritemplate==4.1.1
 urllib3==1.25.11
 user-agent==0.1.10
-vboxapi==1.0
 wcwidth==0.1.8
 webcolors==1.12
 webdriver-manager==3.7.0
