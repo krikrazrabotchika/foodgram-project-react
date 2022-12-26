@@ -1,6 +1,5 @@
 version: '3.3'
 services:
-
   db:
     image: postgres:13.4
     volumes:
@@ -9,7 +8,7 @@ services:
       - ./.env
 
   backend:
-    image: pashtet777/foodgramback:v2.11
+    image: pashtet777/foodgramback
     restart: always
     volumes:
       - static_value:/code/static/
@@ -18,15 +17,13 @@ services:
       - db
     env_file:
       - ./.env
-    container_name: foodgram_backend
 
   frontend:
-    image: pashtet777/foodgramfront:v2.11
+    image: pashtet777/foodgramfront
     volumes:
       - ../frontend/:/app/result_build/
     depends_on:
       - db
-    container_name: foodgram_frontend
 
   nginx:
     image: nginx:1.19.3
@@ -41,7 +38,6 @@ services:
       - media_value:/var/html/media/
     depends_on:
       - backend
-    container_name: foodgram_nginx
 
 volumes:
   postgres_data:
