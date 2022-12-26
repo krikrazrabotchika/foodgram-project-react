@@ -10,9 +10,6 @@
 [![docker](https://img.shields.io/badge/-Docker-464646?style=flat-square&logo=docker)](https://www.docker.com/)
 [![GitHub%20Actions](https://img.shields.io/badge/-GitHub%20Actions-464646?style=flat-square&logo=GitHub%20actions)](https://github.com/features/actions)
 [![Yandex.Cloud](https://img.shields.io/badge/-Yandex.Cloud-464646?style=flat-square&logo=Yandex.Cloud)](https://cloud.yandex.ru/)
-## Данные от входа в админку:
-Логин: admin
-Пароль: admin
 
 
 Foodgram реализован для публикации рецептов. Авторизованные пользователи
@@ -20,6 +17,9 @@ Foodgram реализован для публикации рецептов. Ав
 в покупки, скачать список покупок ингредиентов для добавленных в покупки
 рецептов.
 
+## Данные от входа в админку:
+Логин: admin
+Пароль: admin
 ## Подготовка и запуск проекта
 ### Склонировать репозиторий на локальную машину:
 ```
