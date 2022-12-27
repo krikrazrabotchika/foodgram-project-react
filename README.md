@@ -12,16 +12,18 @@
 [![Yandex.Cloud](https://img.shields.io/badge/-Yandex.Cloud-464646?style=flat-square&logo=Yandex.Cloud)](https://cloud.yandex.ru/)
 
 
-
 Foodgram реализован для публикации рецептов. Авторизованные пользователи
 могут подписываться на понравившихся авторов, добавлять рецепты в избранное,
 в покупки, скачать список покупок ингредиентов для добавленных в покупки
 рецептов.
 
+## Данные от входа в админку:
+Логин: admin
+Пароль: admin
 ## Подготовка и запуск проекта
 ### Склонировать репозиторий на локальную машину:
 ```
-git clone https://github.com/NIK-TIGER-BILL/foodgram-project-react
+git clone https://github.com/krikrazrabotchika/foodgram-project-react
 ```
 ## Для работы с удаленным сервером (на ubuntu):
 * Выполните вход на свой удаленный сервер
@@ -105,4 +107,4 @@ sudo docker-compose up -d --build
     - Проект будет доступен по вашему IP
 
 ## Проект в интернете
-Проект запущен и доступен по [адресу](http://62.84.118.0/recipes)
+Проект запущен и доступен по [адресу](http://84.201.164.217/recipes)
