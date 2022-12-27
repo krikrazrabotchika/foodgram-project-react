@@ -15,6 +15,9 @@ User = get_user_model()
 class CustomUserViewSet(UserViewSet):
     pagination_class = LimitPageNumberPagination
 
+    def get_queryset(self):
+        return User.objects.annotate(recipe_count='recipe')
+
     @action(detail=True, permission_classes=[IsAuthenticated])
     def subscribe(self, request, id=None):
         user = request.user
