@@ -17,7 +17,7 @@ class CustomUserViewSet(UserViewSet):
         return User.objects.annotate(recipe_count='recipe')
 
     @action(detail=True, permission_classes=[IsAuthenticated])
-    def subscribe(self, request, id=None):
+    def subscribe(self, request, id):
         user = request.user
         author = get_object_or_404(User, id=id)
 

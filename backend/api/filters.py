@@ -3,12 +3,11 @@ from django_filters.rest_framework import FilterSet, filters
 from api.models import Ingredient, Recipe, User
 
 
-class IngredientSearchFilter(FilterSet):
-    name = filters.CharFilter(lookup_expr='startswith')
+from rest_framework.filters import SearchFilter
 
-    class Meta:
-        model = Ingredient
-        fields = ['name']
+
+class IngredientSearchFilter(SearchFilter):
+    search_param = 'name'
 
 
 class AuthorAndTagFilter(FilterSet):
