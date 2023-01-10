@@ -122,7 +122,7 @@ class RecipeSerializer(serializers.ModelSerializer):
         return instance
 
 
-class CropRecipeSerializer(serializers.ModelSerializer):
+class RecipeShortSerializer(serializers.ModelSerializer):
     image = Base64ImageField()
 
     class Meta:
@@ -153,8 +153,8 @@ class FollowSerializer(serializers.ModelSerializer):
 
     def get_recipes(self, obj):
         request = self.context.get('request')
-        limit = int(request.GET.get('recipes_limit'))
-        queryset = Recipe.objects.filter(author=obj.author)
+        limit = request.GET.get('recipes_limit')
+        recipes = obj.recipes.all()
         if limit:
-            queryset = queryset(limit)
-        return CropRecipeSerializer(queryset, many=True).data
+            recipes = recipes[:int(limit)]
+        return RecipeShortSerializer(recipes, many=True, read_only=True).data
