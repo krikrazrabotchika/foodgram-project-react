@@ -30,9 +30,9 @@ class CustomUserViewSet(UserViewSet):
                 'errors': 'Вы уже подписаны на данного пользователя'
             }, status=status.HTTP_400_BAD_REQUEST)
 
-        follow = Follow.objects.create(user=user, author=author)
+        Follow.objects.create(user=user, author=author)
         serializer = FollowSerializer(
-            follow, context={'request': request}
+            author, context={'request': request}
         )
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
