@@ -155,8 +155,8 @@ class FollowSerializer(serializers.ModelSerializer):
         request = self.context.get('request').data
         limit = request.get('recipes_limit')
         recipes = (
-            obj.author.recipe.all()[:int(limit)] if limit
-            else obj.author.recipe.all())
+            obj.username.recipe.all()[:int(limit)] if limit
+            else obj.username.recipe.all())
         return RecipeSubscribeSerializer(
             recipes,
             many=True).data
