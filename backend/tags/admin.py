@@ -10,12 +10,12 @@ class TagAdmin(admin.ModelAdmin):
         'name',
         'colored_color',
         'slug',
-    )
+        )
     search_fields = (
         'name',
         'color',
         'slug',
-    )
+        )
 
     prepopulated_fields = {'slug': ('name',)}
     empty_value_display = '-empty-'

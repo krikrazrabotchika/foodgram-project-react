@@ -17,7 +17,7 @@ class UserSerializer(UserSerializer):
         user = self.context.get('request').user
         return user.is_authenticated and user.follower.filter(
             author=obj
-        ).exists()
+            ).exists()
 
     class Meta:
         model = User
@@ -28,7 +28,7 @@ class UserSerializer(UserSerializer):
             'first_name',
             'last_name',
             'is_subscribed'
-        )
+            )
 
 
 class IngredientSerializer(serializers.ModelSerializer):
@@ -77,13 +77,13 @@ class RecipeReadSerializer(serializers.ModelSerializer):
         user = self.context.get('request').user
         return user.is_authenticated and FavoriteRecipe.objects.filter(
             user=user, recipes=obj
-        ).exists()
+            ).exists()
 
     def get_is_in_shopping_cart(self, obj):
         user = self.context.get('request').user
         return user.is_authenticated and ShoppingCart.objects.filter(
             user=user, recipes=obj
-        ).exists()
+            ).exists()
 
     class Meta:
         fields = (
@@ -182,20 +182,21 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
                 recipe=recipe,
                 ingredient_id=ingredient.get('id'),
                 amount=ingredient.get('amount'),
-            )
+                )
             recipeingredient_list.append(recipeingredient)
             self.RecipeIngredient = RecipeIngredient.objects.bulk_create(
                 recipeingredient_list
-            )
+                )
 
     @transaction.atomic
     def create(self, validated_data):
         if ('ingredients'
             and 'tags'
-            and 'image'
-            and 'name'
-            and 'text'
-                and 'cooking_time') in validated_data:
+                and 'image'
+                    and 'name'
+                        and 'text'
+                            and 'cooking_time') in validated_data:
+
             image = validated_data.pop('image')
             ingredients = validated_data.pop('ingredients')
             tags = validated_data.pop('tags')
@@ -244,12 +245,11 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
             'name': {'required': True},
             'text': {'required': True},
             'cooking_time': {'required': True},
-        }
+            }
 
 
 class RecipeSubscribeSerializer(serializers.ModelSerializer):
     """Recipe Subscribe Serializer."""
-
     class Meta:
         model = Recipe
         fields = ('id', 'name', 'image', 'cooking_time')
@@ -270,7 +270,7 @@ class SubscribeSerializer(serializers.ModelSerializer):
         user = self.context.get('request').user
         return user.is_authenticated and Subscribe.objects.filter(
             user=user, author=obj.author
-        ).exists()
+            ).exists()
 
     def _get_recipes(self, obj):
         request = self.context.get('request').data
