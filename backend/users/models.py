@@ -62,7 +62,7 @@ class Subscribe(models.Model):
         #         'email'
         #         ] for single_author in self.author.values('email')]
         return [single_author[
-                    'email'
+            'email'
         ] for single_author in self.author.values('email')]
 
     def __str__(self):
