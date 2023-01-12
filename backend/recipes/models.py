@@ -15,12 +15,12 @@ class Recipe(models.Model):
         through='RecipeIngredient',
         verbose_name='ingredients',
         related_name='recipe',
-        )
+    )
     tags = models.ManyToManyField(
         Tag,
         verbose_name='tags',
         related_name='recipe',
-        blank=True,)
+        blank=True, )
     image = models.ImageField(
         'recipe photo',
         upload_to='static/recipe/',
@@ -51,7 +51,7 @@ class Recipe(models.Model):
         return [
             ingredient[
                 'name'
-                ] for ingredient in self.ingredients.values('name')]
+            ] for ingredient in self.ingredients.values('name')]
 
     def get_tags(self):
         return [tag.get('name') for tag in self.tags.values('name')]
@@ -59,7 +59,7 @@ class Recipe(models.Model):
     class Meta:
         verbose_name = 'Recipe'
         verbose_name_plural = 'Recipes'
-        ordering = ('-pub_date', )
+        ordering = ('-pub_date',)
 
     def __str__(self) -> str:
         return f'{self.name} from {self.author.first_name}'
@@ -76,7 +76,7 @@ class RecipeIngredient(models.Model):
         on_delete=models.CASCADE,
         related_name='ingredient')
     amount = models.PositiveSmallIntegerField(
-        'amount',)
+        'amount', )
 
     class Meta:
         verbose_name = 'ingredient quantity'
@@ -109,8 +109,8 @@ class FavoriteRecipe(models.Model):
         return [
             recipe[
                 'name'
-                ] for recipe in self.recipes.values('name')
-            ]
+            ] for recipe in self.recipes.values('name')
+        ]
 
     @receiver(post_save, sender=User)
     def create_favorite_recipe(
@@ -138,7 +138,7 @@ class ShoppingCart(models.Model):
     def get_recipe(self):
         return [
             recipe['name'] for recipe in self.recipes.values('name')
-            ]
+        ]
 
     @receiver(post_save, sender=User)
     def create_shopping_cart(
@@ -155,5 +155,5 @@ class ShoppingCart(models.Model):
     def __str__(self):
         shopping_cart = [
             recipe['name'] for recipe in self.recipes.values('name')
-            ]
+        ]
         return f'{self.user} shopping cart: {shopping_cart}'

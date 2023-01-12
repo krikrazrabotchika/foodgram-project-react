@@ -14,17 +14,17 @@ class UserAdmin(admin.ModelAdmin):
         'email',
         'first_name',
         'last_name',
-        )
+    )
     search_fields = (
         'email',
         'username',
         'first_name',
         'last_name',
-        )
+    )
     list_filter = (
         'first_name',
         'last_name',
-        )
+    )
     empty_value_display = '-empty-'
 
 
@@ -35,13 +35,14 @@ class SubscribeAdmin(admin.ModelAdmin):
         'user',
         'author',
         'subscribe_date',
-        )
+    )
     search_fields = (
         'user__email',
         'author__email',
-        )
+    )
 
     @admin.display(description='author')
     def author(self, obj):
         return obj.get_author()
+
     empty_value_display = '-empty-'

@@ -7,7 +7,7 @@ class User(AbstractUser):
     email = models.EmailField(
         'email',
         max_length=200,
-        unique=True,)
+        unique=True, )
     first_name = models.CharField(
         'name',
         max_length=150)
@@ -46,7 +46,7 @@ class Subscribe(models.Model):
         'subscribe date',
         auto_now_add=True,
         null=True,
-        )
+    )
 
     class Meta:
         verbose_name = 'subscribe'
@@ -62,8 +62,8 @@ class Subscribe(models.Model):
         #         'email'
         #         ] for single_author in self.author.values('email')]
         return [single_author[
-            'email'
-            ] for single_author in self.author.values('email')]
+                    'email'
+                ] for single_author in self.author.values('email')]
 
     def __str__(self):
         return f'{self.user} subscibed to {self.author}'

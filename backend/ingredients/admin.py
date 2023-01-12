@@ -9,12 +9,12 @@ class IngredientAdmin(admin.ModelAdmin):
         'id',
         'name',
         'measurement_unit',
-        )
+    )
     search_fields = (
         'name',
         'measurement_unit',
-        )
+    )
     list_filter = (
         'measurement_unit',
-        )
+    )
     empty_value_display = '-empty-'

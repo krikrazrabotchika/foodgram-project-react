@@ -26,7 +26,7 @@ class Tag(models.Model):
         validators=[RegexValidator(
             r'^[A-Za-zА-Яа-яЁё\s]+$',
             message='The tag name can only contain letters and spaces'
-            )],
+        )],
         unique=True)
     color = models.CharField(
         'HEX tag color',
@@ -37,7 +37,7 @@ class Tag(models.Model):
                 'A hex triplet is a six-digit, '
                 'three-byte hexadecimal number. '
                 'EXAMPLE --> #FF0000')
-            )],
+        )],
         unique=True)
     slug = models.SlugField(
         'link',
