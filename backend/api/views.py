@@ -17,7 +17,6 @@ from .permissions import IsAdminOrReadOnly
 from .serializers import (IngredientSerializer, RecipeReadSerializer,
                           RecipeSubscribeSerializer, RecipeWriteSerializer,
                           SubscribeSerializer, TagSerializer, UserSerializer)
-from .telegram_bot import send_message
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -202,5 +201,3 @@ def download_shopping_cart(request):
     response['Content-Disposition'] = f'attachment; filename="{file}.txt"'
     if request.method == 'GET':
         return response
-    chat_id = request.data.get('chat_id')
-    return send_message(chat_id, shopping_list)
