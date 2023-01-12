@@ -195,7 +195,7 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
             and 'image'
             and 'name'
             and 'text'
-            and 'cooking_time') in validated_data:
+                and 'cooking_time') in validated_data:
             image = validated_data.pop('image')
             ingredients = validated_data.pop('ingredients')
             tags = validated_data.pop('tags')
