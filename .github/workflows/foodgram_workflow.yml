@@ -103,10 +103,10 @@ jobs:
             sudo docker compose stop
             sudo docker compose rm web -f
             sudo docker compose rm frontend -f
-            sudo docker rmi ${{ secrets.DOCKER_USERNAME }}/foodgram_backend
-            sudo docker rmi ${{ secrets.DOCKER_USERNAME }}/foodgram_frontend
+            sudo docker rmi ${{ secrets.DOCKER_USERNAME }}/fgfront
+            sudo docker rmi ${{ secrets.DOCKER_USERNAME }}/fgback
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/fgback:v2.13
-            sudo docker pull ${{ secrets.DOCKER_LOGIN }}/fgfront:v2.13
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/fgfront:v2.13
             sudo docker compose up -d 
 
   send_message:
