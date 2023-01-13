@@ -1,29 +1,22 @@
-from api.filters import IngredientSearchFilter, RecipeFilter
-from api.paginations import CustomPagination
-from api.permissions import IsAuthorAdminOrReadOnly
-from api.serializers import (
-    FavoriteSerializer,
-    IngredientSerializer,
-    IngredientAmountForRecipe,
-    RecipesListSerializer,
-    RecipeSerializer,
-    ShoppingCartSerializer,
-    TagSerializer
-)
-from api.utils import get_shopping_cart_footer
 from django.db import transaction
 from django.http.response import HttpResponse
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
-from recipes.models import Favorite, Ingredient, Recipe, ShoppingCart, Tag
-from rest_framework import (
-    permissions, response, serializers, status, viewsets
-)
+from rest_framework import permissions, response, serializers, status, viewsets
 from rest_framework.decorators import action
+
+from api.filters import IngredientSearchFilter, RecipeFilter
+from api.paginations import CustomPagination
+from api.permissions import IsAuthorAdminOrReadOnly
+from api.serializers import (FavoriteSerializer, IngredientAmountForRecipe,
+                             IngredientSerializer, RecipeSerializer,
+                             RecipesListSerializer, ShoppingCartSerializer,
+                             TagSerializer)
+from api.utils import get_shopping_cart_footer
+from recipes.models import Favorite, Ingredient, Recipe, ShoppingCart, Tag
 
 
 class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
-    """Отображение ингридиентов."""
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
     pagination_class = None
@@ -32,14 +25,12 @@ class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
-    """Отображение всех тэгов."""
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
     pagination_class = None
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
-    """Отображение рецептов."""
     queryset = Recipe.objects.all()
     pagination_class = CustomPagination
     permission_classes = (IsAuthorAdminOrReadOnly,)

@@ -1,26 +1,22 @@
-from api.paginations import CustomPagination
-from api.permissions import IsAuthorAdminOrReadOnly
 from django.db import transaction
 from django.db.models import Count
 from django.shortcuts import get_object_or_404
 from djoser.views import UserViewSet
 from rest_framework import generics, permissions, response, status
+
+from api.paginations import CustomPagination
+from api.permissions import IsAuthorAdminOrReadOnly
 from users.models import Follow, User
 from users.serializers import FollowSerializer, UserDetailSerializer
 
 
 class UserListViewSet(UserViewSet):
-    """Вьюсет для отображения списка пользователей."""
     queryset = User.objects.all()
     serializer_class = UserDetailSerializer
     permission_classes = (IsAuthorAdminOrReadOnly,)
 
 
 class FollowListViewSet(generics.ListAPIView):
-    """
-    Вьюсет для отображения всех имеющихся у пользователя подписок.
-    Доступность: только авторизованный пользователь.
-    """
     serializer_class = FollowSerializer
     pagination_class = CustomPagination
     permission_classes = (permissions.IsAuthenticated,)
@@ -35,10 +31,6 @@ class FollowCreateDestroyViewSet(
     generics.CreateAPIView,
     generics.DestroyAPIView
 ):
-    """
-    Вьюсет для создания и удаления подписок на авторов.
-    Доступность: только авторизованные пользователи.
-    """
     serializer_class = FollowSerializer
     permission_classes = (permissions.IsAuthenticated,)
 

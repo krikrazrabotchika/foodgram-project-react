@@ -1,12 +1,12 @@
 from django.core.validators import MinValueValidator
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+
 from recipes.validators import validate_color
 from users.models import User
 
 
 class Ingredient(models.Model):
-    """Модель ингредиентов."""
     name = models.CharField(
         max_length=200,
         verbose_name='Название'
@@ -25,7 +25,6 @@ class Ingredient(models.Model):
 
 
 class Tag(models.Model):
-    """Модель тэга."""
     name = models.CharField(
         max_length=200,
         unique=True,
@@ -52,7 +51,6 @@ class Tag(models.Model):
 
 
 class Recipe(models.Model):
-    """Модель рецепта."""
     author = models.ForeignKey(
         User,
         related_name='recipes',
@@ -106,7 +104,6 @@ class Recipe(models.Model):
 
 
 class IngredientAmountForRecipe(models.Model):
-    """Промежуточная модель для количества ингредиентов."""
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
@@ -151,7 +148,6 @@ class IngredientAmountForRecipe(models.Model):
 
 
 class Favorite(models.Model):
-    """Модель избранное."""
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -183,7 +179,6 @@ class Favorite(models.Model):
 
 
 class ShoppingCart(models.Model):
-    """Модель списка покупок."""
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,

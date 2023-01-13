@@ -1,18 +1,14 @@
 from django_filters import rest_framework as filters
-from recipes.models import Recipe
 from rest_framework.filters import SearchFilter
+
+from recipes.models import Recipe
 
 
 class IngredientSearchFilter(SearchFilter):
-    """
-    Добавляет возможность поиска ингредиента
-    по названию, при создании рецепта.
-    """
     search_param = 'name'
 
 
 class RecipeFilter(filters.FilterSet):
-    """Кастомный фильтр для рецептов."""
     author = filters.CharFilter(
         field_name='author',
         method='get_filter_field'
@@ -37,7 +33,7 @@ class RecipeFilter(filters.FilterSet):
         )
 
     def get_filter_field(self, queryset, name, value):
-        if not value:  # and not self.request.user.is_authenticated:
+        if not value:
             return queryset
         if name == 'is_favorited':
             return queryset.filter(

@@ -1,8 +1,10 @@
 import json
 import os
+from typing import Any, Optional
+
 from django.core.management import BaseCommand
 from tqdm import tqdm
-from typing import Any, Optional
+
 from recipes.models import Ingredient
 
 

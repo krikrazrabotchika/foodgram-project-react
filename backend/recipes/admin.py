@@ -1,37 +1,28 @@
 from django.contrib import admin
-from recipes.models import (
-    Favorite,
-    Ingredient,
-    IngredientAmountForRecipe,
-    Recipe,
-    ShoppingCart,
-    Tag
-)
+
+from recipes.models import (Favorite, Ingredient, IngredientAmountForRecipe,
+                            Recipe, ShoppingCart, Tag)
 
 
 @admin.register(Favorite)
 class FavoriteAdmin(admin.ModelAdmin):
-    """Класс админки избранного."""
     list_display = ('user', 'recipe')
     search_fields = ('user__username', 'recipe__name')
 
 
 @admin.register(Ingredient)
 class IngredientAdmin(admin.ModelAdmin):
-    """Класс админки ингредиентов."""
     list_display = ('name', 'measurement_unit')
     search_fields = ('name', )
 
 
 class IngredientInline(admin.StackedInline):
-    """Поле с выбором ингредиента и ввода его количества."""
     model = IngredientAmountForRecipe
     extra = 0
 
 
 @admin.register(IngredientAmountForRecipe)
 class IngredientAmountForRecipeAdmin(admin.ModelAdmin):
-    """Класс админки для количества ингредиента в рецепте."""
     list_display = ('recipe', 'ingredient', 'amount')
     list_filter = ('recipe', )
     search_fields = ('ingredient__name', 'recipe__name')
@@ -39,7 +30,6 @@ class IngredientAmountForRecipeAdmin(admin.ModelAdmin):
 
 @admin.register(Recipe)
 class RecipeAdmin(admin.ModelAdmin):
-    """Класс админки рецептов."""
     inlines = (IngredientInline, )
     fields = (
         'author',
@@ -80,7 +70,6 @@ class RecipeAdmin(admin.ModelAdmin):
 
 @admin.register(ShoppingCart)
 class ShoppingCartAdmin(admin.ModelAdmin):
-    """Класс админки списка покупок."""
     list_display = ('user', 'recipe')
     list_filter = ('user', 'recipe')
     search_fields = ('user__username', 'recipe__name')
@@ -88,7 +77,6 @@ class ShoppingCartAdmin(admin.ModelAdmin):
 
 @admin.register(Tag)
 class TagAdmin(admin.ModelAdmin):
-    """Класс админки тэгов."""
     list_display = ('slug', )
     list_filter = ('slug', )
     search_fields = ('slug', )

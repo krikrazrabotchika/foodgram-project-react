@@ -1,17 +1,13 @@
-from api.conf import (
-    ERROR_MESSAGE_FOR_VALIDATE_REGEX_USERNAME,
-    REGEX_FOR_USERNAME
-)
-from django.contrib.auth.models import (
-    AbstractUser, BaseUserManager
-)
-from django.db import models
+from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.core.validators import RegexValidator
+from django.db import models
 from django.utils.translation import gettext_lazy as _
+
+from api.conf import (ERROR_MESSAGE_FOR_VALIDATE_REGEX_USERNAME,
+                      REGEX_FOR_USERNAME)
 
 
 class UserManager(BaseUserManager):
-    """Класс менджера пользователя."""
     def _create_user(
         self,
         first_name, last_name,
@@ -50,7 +46,6 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractUser):
-    """Модель пользователя."""
     username = models.CharField(
         max_length=150,
         unique=True,
@@ -98,7 +93,6 @@ class User(AbstractUser):
 
 
 class Follow(models.Model):
-    """Модель подписки."""
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,

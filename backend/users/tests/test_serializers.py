@@ -1,9 +1,11 @@
 import random
+
 from django.urls import include, path, reverse
-from foodgram.settings import RESERVED_USERNAME_LIST
 from rest_framework import status
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APITestCase, URLPatternsTestCase
+
+from foodgram.settings import RESERVED_USERNAME_LIST
 from users.models import User
 
 
