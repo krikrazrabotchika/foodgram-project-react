@@ -1,29 +1,27 @@
 version: '3.3'
 services:
   db:
-    image: postgres:13.4
+    image: postgres:13.0-alpine
     volumes:
-      - postgres_data:/var/lib/postgresql/data/
+      - postrges_dbdate:/var/lib/postgres/data/
     env_file:
-      - ../.env
+      - ./.env
 
-  backend:
-    image: pashtet777/foodgramprod:v2.12
+  web:
+    image: pashtet777/fgback:v2.13
     restart: always
     volumes:
-      - static_value:/code/static/
-      - media_value:/code/media/
+      - static_value:/app/backend_static/
+      - media_value:/app/backend_media/
     depends_on:
       - db
     env_file:
-      - ../.env
+      - ./.env
 
   frontend:
-    image: pashtet777/foodgramfront:v2.11
+    image: pashtet777/fgfront:v2.13
     volumes:
       - ../frontend/:/app/result_build/
-    depends_on:
-      - db
 
   nginx:
     image: nginx:1.19.3
@@ -32,14 +30,13 @@ services:
     volumes:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf
       - ../frontend/build:/usr/share/nginx/html/
-      - ../docs/redoc.html:/usr/share/nginx/html/api/docs/redoc.html
-      - ../docs/openapi-schema.yml:/usr/share/nginx/html/api/docs/openapi-schema.yml
-      - static_value:/var/html/static/
-      - media_value:/var/html/media/
+      - ../docs/:/usr/share/nginx/html/api/docs/
+      - static_value:/var/html/backend_static/
+      - media_value:/var/html/backend_media/
     depends_on:
-      - backend
+      - frontend
 
 volumes:
-  postgres_data:
+  postrges_dbdate:
   static_value:
   media_value:

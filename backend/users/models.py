@@ -1,69 +1,130 @@
-from django.contrib.auth.models import AbstractUser
+from api.conf import (
+    ERROR_MESSAGE_FOR_VALIDATE_REGEX_USERNAME,
+    REGEX_FOR_USERNAME
+)
+from django.contrib.auth.models import (
+    AbstractUser, BaseUserManager
+)
 from django.db import models
+from django.core.validators import RegexValidator
+from django.utils.translation import gettext_lazy as _
+
+
+class UserManager(BaseUserManager):
+    """Класс менджера пользователя."""
+    def _create_user(
+        self,
+        first_name, last_name,
+        username, email, password, **extra_fields
+    ):
+        user = self.model(
+            first_name=first_name,
+            last_name=last_name,
+            username=username,
+            email=self.normalize_email(email),
+            **extra_fields
+        )
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_user(
+        self,
+        first_name, last_name,
+        username, email, password
+    ):
+        return self._create_user(
+            first_name, last_name, username, email, password
+        )
+
+    def create_superuser(
+        self,
+        first_name, last_name,
+        username, email, password
+    ):
+        return self._create_user(
+            first_name, last_name,
+            username, email, password,
+            is_staff=True, is_superuser=True
+        )
 
 
 class User(AbstractUser):
-    """Custom user model."""
-    email = models.EmailField(
-        'email',
-        max_length=200,
-        unique=True,)
+    """Модель пользователя."""
+    username = models.CharField(
+        max_length=150,
+        unique=True,
+        verbose_name='Имя пользователя',
+        validators=[
+            RegexValidator(
+                regex=REGEX_FOR_USERNAME,
+                message=_(ERROR_MESSAGE_FOR_VALIDATE_REGEX_USERNAME)
+            )
+        ]
+    )
     first_name = models.CharField(
-        'name',
-        max_length=150)
+        max_length=150,
+        verbose_name='Имя',
+    )
     last_name = models.CharField(
-        'surname',
-        max_length=150)
-    text = models.TextField()
+        max_length=150,
+        verbose_name='Фамилия',
+    )
+    email = models.EmailField(
+        max_length=254,
+        unique=True,
+        verbose_name='Адрес электронной почты',
+    )
+    is_active = models.BooleanField(default=True)
+    is_staff = models.BooleanField(default=False)
 
-    USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['username', 'first_name', 'last_name']
+    USERNAME_FIELD = 'username'
+    REQUIRED_FIELDS = ['email', 'first_name', 'last_name']
+
+    objects = UserManager()
 
     class Meta:
-        verbose_name = 'user'
-        verbose_name_plural = 'users'
-        ordering = ('id',)
+        constraints = [
+            models.UniqueConstraint(
+                fields=['username', 'email'],
+                name='unique_user'
+            )
+        ]
+        verbose_name = 'Пользователь'
+        verbose_name_plural = 'Пользователи'
 
-    def __str__(self):
-        return self.email
+    def __str__(self) -> str:
+        return self.username
 
 
-class Subscribe(models.Model):
+class Follow(models.Model):
+    """Модель подписки."""
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         related_name='follower',
-        verbose_name='follower'
+        verbose_name='Подписчик'
     )
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         related_name='following',
-        verbose_name='author',
-        null=True,
+        verbose_name='Автор'
     )
-    subscribe_date = models.DateTimeField(
-        'subscribe date',
-        auto_now_add=True,
-        null=True,
-        )
 
     class Meta:
-        verbose_name = 'subscribe'
-        verbose_name_plural = 'subscriptions'
         constraints = [
             models.UniqueConstraint(
-                fields=['user', 'author'],
-                name='unique_subscription')]
-
-    def get_author(self):
-        # authors_list = [
-        #     single_author[
-        #         'email'
-        #         ] for single_author in self.author.values('email')]
-        return [single_author[
-            'email'
-            ] for single_author in self.author.values('email')]
+                fields=('user', 'author'),
+                name='unique_follower'
+            )
+        ]
+        verbose_name = 'Подписка'
+        verbose_name_plural = 'Подписки'
 
     def __str__(self):
-        return f'{self.user} subscibed to {self.author}'
+        return (
+            'Автор: [ {} ]; '
+            'Подписчик: [ {} ]'
+            .format(self.author, self.user)
+        )

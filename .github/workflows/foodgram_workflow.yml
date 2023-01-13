@@ -1,85 +1,98 @@
-name: Foodgram Workflow
+name: Foodgram workflow
 
-on:
-  push:
-    branches: [ master ]
-    paths-ignore:
-      - '**/README.md'
+on: [push]
 
 jobs:
-
-  tests:
-    name: PEP8 check
+  flake8_tests:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - name: Set up Python
-        uses: actions/setup-python@v4
+      - uses: actions/checkout@v2
+      - name: set up Python
+        uses: actions/setup-python@v2
         with:
-          python-version: 3.8
-      - name: Install dependencies
+          python-version: 3.7
+      - name: install flake8
         run: |
-          python -m pip install --upgrade pip 
-          pip install flake8 pep8-naming flake8-broken-line flake8-return flake8-isort
-          cd backend/
-          pip install -r requirements.txt
-      - name: Test with flake8
-        run: |
-          python -m flake8 backend
+          python -m pip install --upgrade pip
+          pip install flake8
+      - name: flake8 tests
+        run: python -m flake8
 
-  build_and_push_backend_to_docker_hub:
-    name: Pushing backend image to Docker Hub
+  build_backend_and_push_to_docker_hub:
+    name: push Docker image for backend to Docker Hub
     runs-on: ubuntu-latest
-    needs:
-      - tests
+    needs: flake8_tests
     steps:
-      - name: Check out the repo
-        uses: actions/checkout@v3
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-      - name: Login to Docker
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-      - name: Push to Docker Hub
-        uses: docker/build-push-action@v2
-        with:
-          context: ./backend
-          push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/foodgramprod:v2.12
-
-  build_and_push_frontend_to_docker_hub:
-    name: Pushing frontend image to Docker Hub
-    runs-on: ubuntu-latest
-    needs:
-      - tests
-    steps:
-      - name: Check out the repo
-        uses: actions/checkout@v3
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-      - name: Login to Docker
+      - name: check out the repo
+        uses: actions/checkout@v2
+      - name: set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+      - name: login to Docker
         uses: docker/login-action@v1
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-      - name: Push to Docker Hub
+      - name: push backend to Docker Hub
         uses: docker/build-push-action@v2
         with:
-          context: ./frontend
+          context: backend/
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/foodgramfront:v2.11
+          tags: ${{ secrets.DOCKER_USERNAME }}/fgback:v2.13
+
+  build_frontend_and_push_to_docker_hub:
+    name: push Docker image for frontend to Docker Hub
+    runs-on: ubuntu-latest
+    needs: build_backend_and_push_to_docker_hub
+    steps:
+      - name: check out the repo
+        uses: actions/checkout@v2
+      - name: set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+      - name: login to Docker
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: push frontend to Docker Hub
+        uses: docker/build-push-action@v2
+        with:
+          context: frontend/
+          push: true
+          tags: ${{ secrets.DOCKER_USERNAME }}/fgfront:v2.13
+
+
+  make_env:
+    runs-on: ubuntu-latest
+    needs: build_frontend_and_push_to_docker_hub
+    steps:
+      - uses: actions/checkout@v2
+      - name: install dump-env and make env
+        env:
+          SECRET_DB_ENGINE: ${{ secrets.DB_ENGINE }}
+          SECRET_DB_NAME: ${{ secrets.DB_NAME }}
+          SECRET_POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+          SECRET_POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          SECRET_DB_HOST: ${{ secrets.DB_HOST }}
+          SECRET_DB_PORT: ${{ secrets.DB_PORT }}
+          SECRET_SECRET_KEY: ${{ secrets.SECRET_KEY }}
+        run: |
+          pip install dump-env
+          dump-env -t infra/.env.template -p 'SECRET_' > .env
+      - name: copy env file
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USER }}
+          key: ${{ secrets.SSH_KEY }}
+          passphrase: ${{ secrets.PASSPHRASE }}
+          source: '.env'
+          target: '.'
 
   deploy:
-    name: Deploying on remote server
     runs-on: ubuntu-latest
-    needs:
-      - tests
-      - build_and_push_backend_to_docker_hub
-      - build_and_push_frontend_to_docker_hub
+    needs: make_env
     steps:
-      - name: Executing remote ssh commands to deploy
+      - name: executing remote ssh commands to deploy
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST }}
@@ -87,28 +100,22 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           passphrase: ${{ secrets.PASSPHRASE }}
           script: |
-            sudo rm -f .env        
-            sudo touch .env
-            sudo chmod 666 .env
-            
-            sudo echo SECRET_KEY=${{ secrets.SECRET_KEY }} >> .env
-            sudo echo DB_ENGINE=${{ secrets.DB_ENGINE }} >> .env
-            sudo echo DB_NAME=${{ secrets.DB_NAME }} >> .env
-            sudo echo POSTGRES_USER=${{ secrets.POSTGRES_USER }} >> .env
-            sudo echo POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} >> .env
-            sudo echo DB_HOST=${{ secrets.DB_HOST }} >> .env
-            sudo echo DB_PORT=${{ secrets.DB_PORT }} >> .env
-            
-            sudo docker-compose up -d --build
+            sudo docker compose stop
+            sudo docker compose rm web -f
+            sudo docker compose rm frontend -f
+            sudo docker rmi ${{ secrets.DOCKER_USERNAME }}/foodgram_backend
+            sudo docker rmi ${{ secrets.DOCKER_USERNAME }}/foodgram_frontend
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/fgback:v2.13
+            sudo docker pull ${{ secrets.DOCKER_LOGIN }}/fgfront:v2.13
+            sudo docker compose up -d 
 
   send_message:
-    name: Sending Telegram message
     runs-on: ubuntu-latest
     needs: deploy
     steps:
-      - name: Send message
+      - name: send message
         uses: appleboy/telegram-action@master
         with:
           to: ${{ secrets.TELEGRAM_TO }}
           token: ${{ secrets.TELEGRAM_TOKEN }}
-          message: ${{ github.workflow }} успешно выполнен!
+          message: ${{ github.workflow }} succsefully done!
