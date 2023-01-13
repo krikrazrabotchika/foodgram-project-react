@@ -4,11 +4,15 @@
 Проект доступен по ссылке: [Foodgram](http://84.201.164.217/)
 
 ```
-admin_data = {
-    "username": "admin",
-    "email": "fake@mail.com",
-    "password": "admin"
-}
+Данные для входа в админку:
+логин:admin
+пароль:admin
+Данные от входа на сайт:
+почта: admin@mail.ru
+пароль: admin
+Данные от входа гостя: 
+почта: root@mail.ru
+пароль: root12345
 ```
 ### Request
 ``` bash
